@@ -5,7 +5,9 @@ import toast from "react-hot-toast";
 import {io} from 'socket.io-client'
 import { startRegistration, startAuthentication } from "@simplewebauthn/browser";
 
-const backendUrl = import.meta.env.VITE_BACKEND_URL || `${window.location.protocol}//${window.location.hostname}:6000`;
+// Auto-detect backend URL: use env var, or same origin for production, or localhost for dev
+const backendUrl = import.meta.env.VITE_BACKEND_URL ||
+  (import.meta.env.PROD ? '' : `${window.location.protocol}//${window.location.hostname}:6000`);
 axios.defaults.baseURL = backendUrl;
 
 const getAlternateBackendUrl = (url) => {

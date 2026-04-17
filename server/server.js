@@ -17,12 +17,15 @@ const app = express()
 const server = http.createServer(app)
 
 // NEW CONCEPT FOR ME: SOCKET.IO SETUP
-// Initialize socket.io server
+// Initialize socket.io server with WebSocket support for Vercel
 export const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL || "*",
-    credentials: true
+    origin: process.env.CLIENT_URL || process.env.VERCEL_URL || "*",
+    credentials: true,
+    methods: ["GET", "POST"]
   },
+  transports: ['websocket', 'polling'], // Support both for better compatibility
+  allowEIO3: true // Allow Engine.IO v3 clients
 });
 
 // Store online users
@@ -139,7 +142,7 @@ io.on("connection", (socket) => {
 // middlewares
 app.use(express.json({limit: "50mb"}))
 app.use(cors({
-  origin: process.env.CLIENT_URL || "*",
+  origin: process.env.CLIENT_URL || process.env.VERCEL_URL || "*",
   credentials: true
 }))
 
@@ -157,9 +160,15 @@ app.use("/api/passkey", passkeyRouter)
 await connectDB()
 
 const PORT = process.env.PORT || 6000
-server.listen(PORT,'0.0.0.0', () => {
-  console.log(`Server is running on PORT: ${PORT}`)
-})
 
-// start expiry scheduler
-startRoomExpiryScheduler(io)
+// For Vercel serverless - export the app
+export default app;
+
+// Only start server if not running in serverless environment
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server is running on PORT: ${PORT}`)
+  })
+  // start expiry scheduler
+  startRoomExpiryScheduler(io)
+}
