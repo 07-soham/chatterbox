@@ -110,31 +110,36 @@ function Settings() {
 
         <form onSubmit={saveProfile} className="flex flex-col gap-4">
 
-          <label
-          htmlFor="avatar"
-          className="flex items-center gap-4 cursor-pointer p-2 rounded-xl hover:bg-[var(--bg)] transition-colors"
-          >
+      <label
+  htmlFor="avatar"
+  className="flex items-center gap-4 cursor-pointer p-3 rounded-xl
+  border-2 border-dashed border-[var(--border)]
+  hover:border-[var(--primary)] hover:bg-[var(--bg)]
+  transition-all duration-300"
+>
 
-            <input
-            id="avatar"
-            type="file"
-            hidden
-            accept=".png,.jpg,.jpeg"
-            onChange={(e)=>setSelectedImg(e.target.files[0])}
-            />
+  <input
+    id="avatar"
+    type="file"
+    hidden
+    accept=".png,.jpg,.jpeg"
+    onChange={(e)=>setSelectedImg(e.target.files[0])}
+  />
 
-            <img
-            src={
-              selectedImg
-              ? URL.createObjectURL(selectedImg)
-              : authUser?.profilePic || assets.avatar_icon
-            }
-            className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 border-[var(--text)] object-cover"
-            />
+  <img
+    src={
+      selectedImg
+      ? URL.createObjectURL(selectedImg)
+      : authUser?.profilePic || assets.avatar_icon
+    }
+    className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 border-[var(--text)] object-cover"
+  />
 
-            <span className="text-sm font-semibold">Change avatar</span>
+  <span className="text-sm font-semibold">
+    Change avatar
+  </span>
 
-          </label>
+</label>
 
           <input
           value={name}
