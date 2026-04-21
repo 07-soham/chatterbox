@@ -9,7 +9,7 @@ import User from "../models/User.js";
 import WebAuthnChallenge from "../models/WebAuthnChallenge.js";
 import { generateToken } from "../lib/utils.js";
 
-const RP_ID   = process.env.RPC_ID   || "localhost";
+const RP_ID   = process.env.RP_ID   || "localhost";
 const ORIGIN  = process.env.ORIGIN  || "http://localhost:5173";
 const RP_NAME = process.env.RP_NAME || "ChatterBox";
 

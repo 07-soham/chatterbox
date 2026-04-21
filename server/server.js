@@ -34,9 +34,7 @@ globalThis.io = io;
 globalThis.userSocketMap = userSocketMap;
 globalThis.roomPresence = {};
 
-// Expose io and userSocketMap on globalThis to avoid circular import issues
-globalThis.io = io;
-globalThis.userSocketMap = userSocketMap;
+// Expose io and userSocketMap on globalThis to avoid circular import issues (dedup)
 
 // Socket.io connection handler
 io.on("connection", (socket) => {
@@ -156,8 +154,28 @@ app.use("/api/rooms", roomRouter)
 app.use("/api/notifications", notificationRouter)
 app.use("/api/passkey", passkeyRouter)
 
-//connect to database
-await connectDB()
+// Lazy DB init — runs once per cold start (safe for Vercel serverless)
+let dbReady = false;
+let dbInitPromise = null;
+
+const ensureDB = () => {
+  if (dbReady) return Promise.resolve();
+  if (!dbInitPromise) {
+    dbInitPromise = connectDB().then(() => { dbReady = true; });
+  }
+  return dbInitPromise;
+};
+
+// Run DB init middleware before every request
+app.use(async (req, res, next) => {
+  try {
+    await ensureDB();
+    next();
+  } catch (err) {
+    console.error('DB connection failed:', err);
+    res.status(500).json({ success: false, message: 'Database connection failed' });
+  }
+});
 
 const PORT = process.env.PORT || 6000
 
