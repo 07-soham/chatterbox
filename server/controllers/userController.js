@@ -58,12 +58,50 @@ export const getUserStats = async (req, res) => {
             User.countDocuments({ _id: { $ne: userId } })
         ]);
 
+        // Calculate 24-hour activity (messages sent per hour)
+        const twentyFourHoursAgo = new Date();
+        twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
+
+        const activity = await Message.aggregate([
+            {
+                $match: {
+                    senderId: userId,
+                    createdAt: { $gte: twentyFourHoursAgo }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        $dateToString: { format: "%Y-%m-%d %H:00", date: "$createdAt" }
+                    },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { "_id": 1 } }
+        ]);
+
+        // Fill in missing hours with 0
+        const activityData = [];
+        for (let i = 0; i < 24; i++) {
+            const date = new Date();
+            date.setHours(date.getHours() - (23 - i));
+            const hourStr = date.toISOString().slice(0, 13).replace("T", " ") + ":00";
+            const displayTime = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            const hourData = activity.find(a => a._id === hourStr);
+            activityData.push({
+                time: displayTime,
+                active: hourData ? hourData.count : 0
+            });
+        }
+
         res.json({
             success: true,
             stats: {
                 messagesSent,
                 activeRooms: roomsCount,
-                totalUsers
+                totalUsers,
+                activityData
             }
         });
     } catch (error) {

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState, useMemo } from "react";
 import { RoomContext } from "../../context/roomContext";
 import { AuthContext } from "../../context/authContext";
 import { formatMessageTime } from "../lib/utils";
-import { Image, Info, X, Clock, Trash2, Menu, Users } from "lucide-react";
+import { Image, Info, X, Clock, Trash2, Menu, Users, Send } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { ChatContext } from "../../context/chatContext";
 
@@ -573,10 +573,16 @@ function ChatRoom({ onOpenLeft }) {
         onSubmit={handleSendMessage}
         className="border-t-4 border-black p-3 flex gap-2 items-center"
       >
-
         <label
           htmlFor="imageUpload"
-          className="saas-btn bg-[var(--primary)] text-white px-3 cursor-pointer"
+          className={`
+            w-10 h-10 sm:w-12 sm:h-12 
+            rounded-full flex-shrink-0
+            flex items-center justify-center 
+            cursor-pointer transition-all duration-200
+            bg-[var(--primary)] text-white hover:bg-blue-600 active:scale-90
+            border-2 border-black
+          `}
           aria-label="Upload image"
         >
           <Image size={18} />
@@ -589,7 +595,7 @@ function ChatRoom({ onOpenLeft }) {
           onChange={handleImageSend}
         />
         <input
-          className="cartoon-input flex-1"
+          className="cartoon-input flex-1 min-w-0"
           value={input}
           onChange={(e) => {
             setInput(e.target.value);
@@ -615,9 +621,24 @@ function ChatRoom({ onOpenLeft }) {
           placeholder="Type a message"
         />
 
-        <button className="saas-btn bg-green-500 text-white" type="submit">
-          Send
-        </button>
+      <button
+  type="submit"
+  disabled={ !input.trim()}
+  className={`
+    w-10 h-10 sm:w-12 sm:h-12
+    rounded-full flex-shrink-0
+    flex items-center justify-center
+    border-2 border-black
+    bg-green-500 text-white
+    shadow-inner
+    hover:bg-green-600
+    active:scale-90
+    transition-all duration-200
+  `}
+  aria-label="Send message"
+>
+  <Send size={20} className="block" />
+</button>
 
       </form>
 

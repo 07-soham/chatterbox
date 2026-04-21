@@ -2,14 +2,14 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { ChatContext } from "../../context/chatContext";
 import { AuthContext } from "../../context/authContext";
 import { formatMessageTime } from "../lib/utils";
-import { Image, Menu, Info, Video, Trash2, ChevronLeft } from "lucide-react";
+import { Image, Menu, Info, Video, Trash2, ChevronLeft, Send } from "lucide-react";
 import { VideoCallContext } from "../../context/VideoCallContext";
 import { NavLink } from "react-router-dom";
 // import {ThemeSelector} from "./ThemeSelector";
 
 
 function ChatContainer({ onOpenLeft }) {
-  const { authUser } = useContext(AuthContext);
+  const { authUser, onlineUsers } = useContext(AuthContext);
   const {
     messages,
     sendMessage,
@@ -119,9 +119,9 @@ function ChatContainer({ onOpenLeft }) {
         <img src={selectedUser?.profilePic || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(selectedUser?.fullName || selectedUser?.username || "U")}&backgroundColor=8B5CF6,4F46E5,EC4899,10B981,F59E0B`} className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-black" />
 
         <div className="flex flex-col min-w-0">
-          <p className="font-extrabold text-base sm:text-lg truncate">{selectedUser.fullName}</p>
-          <p className="text-[10px] sm:text-xs font-bold text-gray-600 truncate">
-            {selectedUser.friendStatus === 'friend' ? 'Connected' : 'Not Connected'}
+          <p className="font-extrabold text-base sm:text-lg truncate leading-tight">{selectedUser.fullName}</p>
+          <p className={`text-[10px] sm:text-xs font-bold truncate ${onlineUsers.includes(selectedUser._id) ? "text-green-600" : "text-gray-500"}`}>
+            {onlineUsers.includes(selectedUser._id) ? "● Online" : "○ Offline"}
           </p>
         </div>
 
@@ -290,26 +290,49 @@ function ChatContainer({ onOpenLeft }) {
           sendMessage({ text: input });
           setInput("");
         }}
-        className="border-t-4 border-black p-2 sm:p-3 flex gap-2 items-center "
+        className="border-t-4 border-black p-2 sm:p-3 flex gap-2 items-center"
       >
         <label
           htmlFor="imageUpload"
-          className={`saas-btn p-2 sm:px-3 cursor bg-[var(--primary)] text-white ${!isFriend ? "opacity-50 cursor-not-allowed" : ""}`}
+          className={`
+            w-10 h-10 sm:w-12 sm:h-12 
+            rounded-full flex-shrink-0
+            flex items-center justify-center 
+            cursor-pointer transition-all duration-200
+            bg-[var(--primary)] text-white 
+            ${!isFriend ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-600 active:scale-90"}
+            border-2 border-black
+          `}
           aria-label="Upload image"
         >
           <Image size={20} />
         </label>
         <input id="imageUpload" type="file" hidden onChange={handleImageSend} disabled={!isFriend} />
         <input
-          className="cartoon-input flex-1 py-2 sm:py-3 text-sm sm:text-base"
+          className="cartoon-input flex-1 py-2 sm:py-3 text-sm sm:text-base min-w-0"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder={isFriend ? "Type message..." : "Add friend to start"}
           disabled={!isFriend}
         />
-        <button type="submit" disabled={!isFriend} className=" saas-btn bg-green-500 text-white px-3 sm:px-6">
-          Send
-        </button>
+        <button
+  type="submit"
+  disabled={!isFriend || !input.trim()}
+  className={`
+    w-10 h-10 sm:w-12 sm:h-12
+    rounded-full flex-shrink-0
+    flex items-center justify-center
+    border-2 border-black
+    bg-green-500 text-white
+    shadow-inner
+    hover:bg-green-600
+    active:scale-90
+    transition-all duration-200
+  `}
+  aria-label="Send message"
+>
+  <Send size={20} className="block" />
+</button>
       </form>
 
     </div>

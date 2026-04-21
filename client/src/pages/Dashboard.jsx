@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/authContext";
 import { ChatContext } from "../../context/chatContext";
 import { NotificationContext } from "../../context/NotificationContext";
-
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import {
   Users,
   UserCheck,
@@ -31,18 +31,11 @@ function Dashboard() {
   const [dbStats, setDbStats] = useState({
     messagesSent: 0,
     activeRooms: 0,
-    totalUsers: 0
+    totalUsers: 0,
+    activityData: []
   });
 
-  const activityData = [
-    { time: "8 AM", active: 5 },
-    { time: "10 AM", active: 12 },
-    { time: "12 PM", active: 20 },
-    { time: "2 PM", active: 18 },
-    { time: "4 PM", active: 25 },
-    { time: "6 PM", active: 15 },
-    { time: "8 PM", active: 10 },
-  ];
+  const [loadingStats, setLoadingStats] = useState(true);
 
   useEffect(() => {
     getUsers();
@@ -51,10 +44,15 @@ function Dashboard() {
 
   const fetchDbStats = async () => {
     try {
+      setLoadingStats(true);
       const { data } = await axios.get("/api/auth/stats");
-      if (data.success) setDbStats(data.stats);
+      if (data.success) {
+        setDbStats(data.stats);
+      }
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoadingStats(false);
     }
   };
 
@@ -124,6 +122,11 @@ function Dashboard() {
               {authUser?.fullName} !
             </span>
           </h1>
+<DotLottieReact
+      src="https://lottie.host/1ccfd922-4109-4ef8-a6b3-bafce4ab8a98/j3jMnb5zJi.lottie"
+      loop
+      autoplay
+    />
           <p className="text-base sm:text-lg md:text-xl font-bold text-[var(--text-secondary)] mt-4 max-w-2xl opacity-90">
             Your chat playground is ready. Dive in and connect with your friends!
           </p>
@@ -191,12 +194,12 @@ function Dashboard() {
           <div className="h-[200px] sm:h-[250px] w-full">
             <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
 
-              <LineChart data={activityData}>
+              <LineChart data={dbStats.activityData}>
 
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
 
-                <XAxis dataKey="time" stroke="var(--text-primary)" fontSize={12} />
-                <YAxis stroke="var(--text-primary)" fontSize={12} />
+                <XAxis dataKey="time" stroke="var(--text-primary)" fontSize={12} interval={3} />
+                <YAxis stroke="var(--text-primary)" fontSize={12} allowDecimals={false} />
 
                 <Tooltip contentStyle={{ backgroundColor: "var(--surface)", borderColor: "var(--text-primary)" }} itemStyle={{ color: "var(--text-primary)" }} />
 
@@ -205,7 +208,7 @@ function Dashboard() {
                   dataKey="active"
                   stroke="var(--primary)"
                   strokeWidth={4}
-                  dot={{ r: 6, fill: "var(--primary)" }}
+                  dot={{ r: 4, strokeWidth: 2, fill: "var(--surface)" }}
                 />
 
               </LineChart>

@@ -28,13 +28,11 @@ export const io = new Server(server, {
   allowEIO3: true // Allow Engine.IO v3 clients
 });
 
-// Store online users
+// Store online users: userId -> Set of socketIds
 export const userSocketMap = {};
 globalThis.io = io;
 globalThis.userSocketMap = userSocketMap;
 globalThis.roomPresence = {};
-
-// Expose io and userSocketMap on globalThis to avoid circular import issues (dedup)
 
 // Socket.io connection handler
 io.on("connection", (socket) => {
@@ -43,7 +41,10 @@ io.on("connection", (socket) => {
 
   // Save user socket
   if (userId) {
-    userSocketMap[userId] = socket.id;
+    if (!userSocketMap[userId]) {
+      userSocketMap[userId] = new Set();
+    }
+    userSocketMap[userId].add(socket.id);
   }
 
   // Emit online users
@@ -82,17 +83,25 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("User Disconnected:", userId);
 
-    if (userId && userSocketMap[userId] === socket.id) {
-      delete userSocketMap[userId];
+    if (userId && userSocketMap[userId]) {
+      userSocketMap[userId].delete(socket.id);
+      if (userSocketMap[userId].size === 0) {
+        delete userSocketMap[userId];
+      }
     }
     // Remove from all roomPresence sets
     const uid = userId?.toString();
     if (uid) {
-      Object.entries(globalThis.roomPresence).forEach(([rid, set]) => {
-        if (set.delete(uid)) {
-          io.to(`room:${rid}`).emit("room:presence", { roomId: rid, present: Array.from(set) });
-        }
-      });
+      // Check if user still has other active connections
+      const isStillOnline = userSocketMap[uid] && userSocketMap[uid].size > 0;
+      
+      if (!isStillOnline) {
+        Object.entries(globalThis.roomPresence).forEach(([rid, set]) => {
+          if (set.delete(uid)) {
+            io.to(`room:${rid}`).emit("room:presence", { roomId: rid, present: Array.from(set) });
+          }
+        });
+      }
     }
 
     // Emit updated online users

@@ -52,8 +52,10 @@ function LoginPage() {
           >
             <h1 className="text-3xl sm:text-4xl font-black text-center text-[#5B21B6] mb-1 sm:mb-2">
               {mode === "login" ? "Login" : "Sign Up"}
+              
             </h1>
-
+<h2 className="text-center text-3xl sm:text-base font-bold text-red-500 mb-6">App under Testing !
+  </h2>
             {/* Username/Bio input — only on register */}
             {mode === "sign-up" && (
               <div className="flex flex-col gap-4">
@@ -73,12 +75,14 @@ function LoginPage() {
               </div>
             )}
 
+
+
             {/* Main action button */}
             <button
               type="submit"
               className="w-full bg-[#6366F1] hover:bg-[#4F46E5] text-white rounded-xl py-4 font-black flex items-center justify-center gap-3 shadow-[0_4px_14px_0_rgba(99,102,241,0.39)] active:scale-95 transition-all text-lg"
             >
-              🔑 {mode === "login" ? "Login with Passkey" : "Create Account with Passkey"}
+              {mode === "login" ? "Login with Passkey" : "Create Account with Passkey"}
             </button>
 
             <div className="relative flex items-center justify-center my-2">

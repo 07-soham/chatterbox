@@ -245,16 +245,24 @@ export function RoomProvider({ children }) {
       setRoomMessages(prev => prev.map(m => m._id === id ? { ...m, isDeletedForEveryone: true, text: "", image: "", file: null } : m));
     };
 
+    const onPresence = ({ roomId, present }) => {
+      if (roomId === activeRoom?._id) {
+        setPresence(prev => ({ ...prev, present }));
+      }
+    };
+
     socket.on("room:message", onMsg);
     socket.on("room:typing", onTyping);
     socket.on("room:messageDeletedForMe", onDeleteForMe);
     socket.on("room:messageDeletedForEveryone", onDeleteForEveryone);
+    socket.on("room:presence", onPresence);
 
     return () => {
       socket.off("room:message", onMsg);
       socket.off("room:typing", onTyping);
       socket.off("room:messageDeletedForMe", onDeleteForMe);
       socket.off("room:messageDeletedForEveryone", onDeleteForEveryone);
+      socket.off("room:presence", onPresence);
 
       if (activeRoom?._id) socket.emit("room:leave", activeRoom._id);
     };
