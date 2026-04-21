@@ -96,14 +96,25 @@ function ChatContainer({ onOpenLeft }) {
       {/* HEADER */}
       <div className="flex items-center gap-2 sm:gap-3 border-b-4 border-black p-3 sm:p-4 relative bg-[var(--header)]">
 
-        <button
-          type="button"
-          onClick={onOpenLeft}
-          className="cartoon-btn p-2 md:hidden"
-          aria-label="Back to chat list"
-        >
-          <ChevronLeft size={20} />
-        </button>
+       <button
+  type="button"
+  onClick={onOpenLeft}
+  className="
+  md:hidden
+  flex items-center justify-center
+  w-9 h-9
+  rounded-full
+  bg-[var(--card)]
+  text-[var(--text)]
+  shadow-sm
+  hover:bg-[var(--primary)] hover:text-white
+  transition-all duration-200
+  active:scale-95
+  "
+  aria-label="Back to chat list"
+>
+  <ChevronLeft size={18} />
+</button>
 
         <img src={selectedUser?.profilePic || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(selectedUser?.fullName || selectedUser?.username || "U")}&backgroundColor=8B5CF6,4F46E5,EC4899,10B981,F59E0B`} className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-black" />
 

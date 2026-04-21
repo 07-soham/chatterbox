@@ -4,6 +4,7 @@ import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from '../context/authContext.jsx'
 import { ChatProvider } from '../context/chatContext.jsx'
+import { RoomProvider } from '../context/roomContext.jsx'
 import { NotificationProvider } from '../context/NotificationContext.jsx'
 import VideoCallProvider from "../context/VideoCallContext.jsx";
 
@@ -15,11 +16,13 @@ root.render(
   <BrowserRouter>
     <AuthProvider>  
       <ChatProvider>
-        <NotificationProvider>
-          <VideoCallProvider>
-            <App />
-          </VideoCallProvider>
-        </NotificationProvider>
+        <RoomProvider>
+          <NotificationProvider>
+            <VideoCallProvider>
+              <App />
+            </VideoCallProvider>
+          </NotificationProvider>
+        </RoomProvider>
       </ChatProvider>
     </AuthProvider> 
   </BrowserRouter>

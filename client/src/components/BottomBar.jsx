@@ -2,15 +2,23 @@ import React, { useContext } from "react";
 import { LayoutDashboard, MessageCircle, Users, UserPlus } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { NotificationContext } from "../../context/NotificationContext";
+import { ChatContext } from "../../context/chatContext";
+import { RoomContext } from "../../context/roomContext";
 
 function BottomBar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { notifications } = useContext(NotificationContext);
+  const { selectedUser } = useContext(ChatContext);
+  const { activeRoom } = useContext(RoomContext);
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
   const isActive = (path) => location.pathname === path;
+
+  const isChatting = (location.pathname === "/chats" && selectedUser) || (location.pathname === "/rooms" && activeRoom);
+
+  if (isChatting) return null;
 
   const getColor = (path) => {
     return isActive(path)
@@ -26,7 +34,7 @@ function BottomBar() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-[var(--surface)] border-t border-[var(--border)] px-2 pb-safe pt-2 backdrop-blur-lg bg-opacity-80">
+    <nav className="md:hidden bg-[var(--surface)] border-t border-[var(--border)] px-2 pb-safe pt-2 backdrop-blur-lg bg-opacity-80 flex-shrink-0">
       <div className="flex justify-around items-center h-14 max-w-md mx-auto">
         {navItems.map((item) => (
           <button

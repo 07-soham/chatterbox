@@ -9,7 +9,6 @@ import ChatBot from "./components/ChatBot";
 import LandingPage from "./pages/LandingPage";
 import Friendlist from "./pages/Friendlist";
 import RoomsPage from "./pages/RoomsPage";
-import { RoomProvider } from "../context/roomContext";
 import RoomsJoinPage from "./pages/RoomsJoinPage";
 import Navbar from "./components/Navbar";
 import Siddy from "./components/Siddy";
@@ -130,7 +129,6 @@ function App() {
         )}
 
         <main className="flex-1 overflow-y-auto transition-all duration-300 min-w-0">
-          <RoomProvider>
             <Routes>
               <Route path="/" element={authUser ? <Dashboard/> : <Navigate to="/login" />} />
               <Route path="/chats" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
@@ -143,7 +141,6 @@ function App() {
               <Route path="/rooms/join" element={authUser ? <RoomsJoinPage /> : <Navigate to="/login" />} />
               <Route path="/settings" element={authUser ? <Settings /> : <Navigate to="/login" />} />
             </Routes>
-          </RoomProvider>
         </main>
       </div>
 

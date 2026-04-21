@@ -243,6 +243,10 @@ body {
   letter-spacing: -0.025em;
 }
 
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
 /* =========================================
    UTILITIES & ANIMATIONS
    ========================================= */

@@ -121,7 +121,7 @@ function Dashboard() {
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-black text-[var(--primary)] leading-[1.1] tracking-tight">
             Welcome back,{" "}
             <span className="rainbow-text block sm:inline">
-              {authUser?.fullName}
+              {authUser?.fullName} !
             </span>
           </h1>
           <p className="text-base sm:text-lg md:text-xl font-bold text-[var(--text-secondary)] mt-4 max-w-2xl opacity-90">

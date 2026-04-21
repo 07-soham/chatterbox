@@ -41,13 +41,13 @@ const Navbar = ({ toggleSidebar, isSidebarOpen }) => {
 
             {/* LOGO */}
             <Link to="/" className="flex items-center gap-2 group">
-              <Box
-                size={28}
-                className="transition-transform duration-300 group-hover:rotate-6 text-[var(--primary)]"
-              />
-              <span className="hidden sm:inline text-xl font-extrabold text-[var(--text-primary)] tracking-tight">
-                ChatterBox
-              </span>
+             <Box
+  size={28}
+  className="animate-[spin_4s_linear_infinite] text-[var(--primary)]"
+/>
+              <span className="text-lg sm:text-xl font-extrabold text-[var(--text-primary)] tracking-tight">
+  ChatterBox
+</span>
             </Link>
           </div>
 
