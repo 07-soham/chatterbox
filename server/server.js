@@ -144,16 +144,6 @@ app.use(cors({
   credentials: true
 }))
 
-// sample routes
-app.use("/api/status", (req, res)=> res.send("Server is live"))
-
-app.use("/api/auth", userRouter)
-app.use("/api/messages", messageRouter)
-app.use("/api/friends", friendRouter)
-app.use("/api/rooms", roomRouter)
-app.use("/api/notifications", notificationRouter)
-app.use("/api/passkey", passkeyRouter)
-
 // Lazy DB init — runs once per cold start (safe for Vercel serverless)
 let dbReady = false;
 let dbInitPromise = null;
@@ -166,7 +156,7 @@ const ensureDB = () => {
   return dbInitPromise;
 };
 
-// Run DB init middleware before every request
+// Run DB init middleware BEFORE routes
 app.use(async (req, res, next) => {
   try {
     await ensureDB();
@@ -176,6 +166,16 @@ app.use(async (req, res, next) => {
     res.status(500).json({ success: false, message: 'Database connection failed' });
   }
 });
+
+// routes
+app.use("/api/status", (req, res)=> res.send("Server is live"))
+
+app.use("/api/auth", userRouter)
+app.use("/api/messages", messageRouter)
+app.use("/api/friends", friendRouter)
+app.use("/api/rooms", roomRouter)
+app.use("/api/notifications", notificationRouter)
+app.use("/api/passkey", passkeyRouter)
 
 const PORT = process.env.PORT || 6000
 
