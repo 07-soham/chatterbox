@@ -59,8 +59,8 @@ export const getUsersForSidebar = async (req, res) => {
         });
 
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Server error" });
+        console.error("GET USERS FOR SIDEBAR ERROR:", error);
+        res.status(500).json({ success: false, message: "Server error", error: error.message, stack: error.stack });
     }
 };
 

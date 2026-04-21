@@ -160,10 +160,15 @@ const ensureDB = () => {
 app.use(async (req, res, next) => {
   try {
     await ensureDB();
+    // Check if mongoose is actually connected
+    const mongoose = (await import('mongoose')).default;
+    if (mongoose.connection.readyState !== 1) {
+      throw new Error("Mongoose is not connected (state: " + mongoose.connection.readyState + ")");
+    }
     next();
   } catch (err) {
-    console.error('DB connection failed:', err);
-    res.status(500).json({ success: false, message: 'Database connection failed' });
+    console.error('DB connection failed in middleware:', err);
+    res.status(500).json({ success: false, message: 'Database connection failed', error: err.message });
   }
 });
 
@@ -176,6 +181,17 @@ app.use("/api/friends", friendRouter)
 app.use("/api/rooms", roomRouter)
 app.use("/api/notifications", notificationRouter)
 app.use("/api/passkey", passkeyRouter)
+
+// Global Error Handler to expose the actual serverless crash cause
+app.use((err, req, res, next) => {
+  console.error("Global Error Handler caught:", err);
+  res.status(500).json({
+    success: false,
+    message: "Internal Server Error",
+    error: err.message,
+    stack: process.env.NODE_ENV === "production" ? null : err.stack
+  });
+});
 
 const PORT = process.env.PORT || 6000
 
